@@ -4,12 +4,9 @@ Este modulo trae datos de distintos sitios web de venta de inmuebles.
 
 import bs4
 import requests as r
-import time
 
 lista = []
 house_id = 0
-
-inicio = time.time()
 
 for i in range(42): #get data until page 30
     if i == 0:
@@ -42,6 +39,14 @@ for i in range(42): #get data until page 30
                     attributes = attributes[1]
                 for i in range(2):
                      sublist.append("")
+            
+            if property_type == "Local":
+                if len(attributes) == 1:
+                    for _ in range(2):
+                        sublist.append("")
+                else:
+                    sublist.append("")
+
 
             for attribute in attributes:
                 info = attribute.text.split()
@@ -54,13 +59,10 @@ for i in range(42): #get data until page 30
         if sublist:
             lista.append(sublist)
 
-fin = time.time()
-tiempo = fin - inicio
-
 for item in lista:
-    print(item)
+    if item[1] == "Local":
+        print(item)
 print()
-print(tiempo)
 
 """
 TO DO:
