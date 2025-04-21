@@ -36,7 +36,10 @@ for i in range(42):
             # metros cuadrados, ambientes, etc.
             attributes = item.find_all('li')
 
-            if attributes:
+            #lee la ubicacion
+            location = item.find('span',class_="poly-component__location")
+
+            if attributes and location:
                 house_id += 1 
                 sublist.append(house_id) 
                 sublist.append(property_type)
@@ -73,6 +76,10 @@ for i in range(42):
                     else:
                         sublist.append(int(info[0].replace(".","")) * 1000) # 1 hectarea = 10000 m2
 
+                #la ciudad
+                sublist.append(location.text.split(",")[-1])
+                #el barrio
+                sublist.append(location.text.split(",")[-2])
                 
                 lista.append(sublist)
 
@@ -82,7 +89,7 @@ for item in lista:
 """
 TO DO:
 - Revisar error relacionado con las listas. Cuando en los terrenos hay (1 amb | m2) se loopea dos veces por articulo de la pagina. (HECHO)
-- Terminar de diseñar el script. Falta traer los datos de ubicacion.
+- Terminar de diseñar el script. Falta traer los datos de ubicacion. (HECHO)
 - Configurar proxys para que no se bloquee la aplicacion por la cantidad de requests.
 - Diseñar carga a la BD cuando termine todo.
 """
