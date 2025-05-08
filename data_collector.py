@@ -5,6 +5,7 @@ Este modulo trae datos de distintos sitios web de venta de inmuebles.
 import random as rn
 import bs4
 import requests as r
+from concurrent.futures import ThreadPoolExecutor
 
 house_id = 0
 
@@ -40,7 +41,7 @@ def format_proxy(proxy_url:str) -> dict:
     return {"http": proxy_url}
 
 
-def fetch_page(page_num:int, proxy=None) -> str:
+def fetch_page(url:str, proxy=None) -> str:
     """
     Hace una petición la página de venta de inmuebles de MercadoLibre 
     y retorna la respuesta en formato texto. 
@@ -56,10 +57,6 @@ def fetch_page(page_num:int, proxy=None) -> str:
     Returns: 
         La página en formato texto.
     """
-
-    end = f"_Desde_{page_num * 48 + 1}" if page_num else ''
-
-    url = "https://inmuebles.mercadolibre.com.ar/venta/" + end
 
     file = r.get(url,
                 proxies=proxy,
@@ -179,6 +176,28 @@ def get_item_data(item:list[str]) -> list[str]:
             sublist.append(location.text.split(",")[-2])
     return sublist
 
+def url_maker() -> list[str]:
+    """
+    Produce las URLs de MercadoLibre a scrapear. 
+    
+    Params:
+        None
+    Returns:
+        Una matriz donde cada registro es una URL de la página de
+        inmuebles en venta de MercadoLibre.
+    """
+    urls = []
+
+    #Mercado Libre solo permite ver hasta la pagina 42 en las busquedas
+    for page_num in range(42):
+        end = f"_Desde_{page_num * 48 + 1}" if page_num else ''
+
+        url = "https://inmuebles.mercadolibre.com.ar/venta/" + end
+
+        urls.append(url)
+
+    return urls
+
 
 def collect_data() -> list[str]:
     """
@@ -192,8 +211,9 @@ def collect_data() -> list[str]:
     """
     meli_data = []
     proxies = read_txt('proxies.txt')
-    #Mercado Libre solo permite ver hasta la pagina 42 en las busquedas
-    for page in range(42):
+    urls = url_maker()
+
+    for page in urls:
         html = fetch_page(page,
                           proxy=format_proxy(rn.choice(proxies))
                 )
@@ -208,3 +228,5 @@ def collect_data() -> list[str]:
                 meli_data.append(item_data)
 
     return meli_data
+
+print(collect_data())
