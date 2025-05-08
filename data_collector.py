@@ -230,5 +230,3 @@ def collect_data() -> list[str]:
                 meli_data.append(item_data)
 
     return meli_data
-
-print(collect_data())
