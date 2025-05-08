@@ -6,8 +6,12 @@ import random as rn
 from concurrent.futures import ThreadPoolExecutor
 import bs4
 import requests as r
+<<<<<<< HEAD
 import time
 from functools import partial
+=======
+from concurrent.futures import ThreadPoolExecutor
+>>>>>>> a04ef7cce139b3f66bb650134949f70b4ef61274
 
 house_id = 0
 
@@ -231,3 +235,5 @@ def collect_data() -> list[str]:
                 meli_data.append(item_data)
 
     return meli_data
+
+print(collect_data())
