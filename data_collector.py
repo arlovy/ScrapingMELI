@@ -3,9 +3,11 @@ Este modulo trae datos de distintos sitios web de venta de inmuebles.
 """
 
 import random as rn
+from concurrent.futures import ThreadPoolExecutor
 import bs4
 import requests as r
-from concurrent.futures import ThreadPoolExecutor
+import time
+from functools import partial
 
 house_id = 0
 
@@ -213,12 +215,13 @@ def collect_data() -> list[str]:
     proxies = read_txt('proxies.txt')
     urls = url_maker()
 
-    for page in urls:
-        html = fetch_page(page,
-                          proxy=format_proxy(rn.choice(proxies))
-                )
+    with ThreadPoolExecutor(max_workers=30) as executor:
+        fetch = partial(fetch_page, proxy=format_proxy(rn.choice(proxies)))
+        archivos = list(executor.map(fetch, urls))
 
-        articles = bs4.BeautifulSoup(html,
+
+    for archivo in archivos:
+        articles = bs4.BeautifulSoup(archivo,
                                      features='html.parser'
                         ).find_all('li',class_='ui-search-layout__item')
 
@@ -228,5 +231,3 @@ def collect_data() -> list[str]:
                 meli_data.append(item_data)
 
     return meli_data
-
-print(collect_data())
