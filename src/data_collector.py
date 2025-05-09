@@ -1,17 +1,13 @@
 """
-Este modulo trae datos de distintos sitios web de venta de inmuebles.
+Este modulo trae datos del sitio web de venta de inmuebles de MercadoLibre.
 """
 
 import random as rn
 from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 import bs4
 import requests as r
-<<<<<<< HEAD
-import time
-from functools import partial
-=======
-from concurrent.futures import ThreadPoolExecutor
->>>>>>> a04ef7cce139b3f66bb650134949f70b4ef61274
+
 
 house_id = 0
 
@@ -235,5 +231,3 @@ def collect_data() -> list[str]:
                 meli_data.append(item_data)
 
     return meli_data
-
-print(collect_data())
