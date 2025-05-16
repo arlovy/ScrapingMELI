@@ -9,8 +9,6 @@ import bs4
 import requests as r
 
 
-house_id = 0
-
 def read_txt(path:str) -> list[str]:
     """
     Lee un archivo de texto.
@@ -161,9 +159,6 @@ def get_item_data(item:list[str]) -> list[str]:
         location = item.find('span',class_="poly-component__location")
 
         if attributes and location: #si el articulo esta completo
-            global house_id
-            house_id += 1
-            sublist.append(house_id)
             sublist.append(property_type)
 
             sublist.append(price[3:].replace(".","")) # US$3.942  >> 3942
@@ -201,7 +196,7 @@ def url_maker() -> list[str]:
     return urls
 
 
-def collect_data() -> list[str]:
+def collect_data(proxies_url:str) -> list[str]:
     """
     Función principal del módulo. Extrae datos de los artículos de venta
     de inmuebles en MercadoLibre que esten completos.
@@ -212,7 +207,7 @@ def collect_data() -> list[str]:
         Una matriz donde cada registro es una propiedad en venta
     """
     meli_data = []
-    proxies = read_txt('proxies.txt')
+    proxies = read_txt(proxies_url)
     urls = url_maker()
 
     with ThreadPoolExecutor(max_workers=30) as executor:
@@ -227,7 +222,7 @@ def collect_data() -> list[str]:
 
         for article in articles:
             item_data = get_item_data(article)
-            if item_data:
+            if item_data and len(item_data) == 7:
                 meli_data.append(item_data)
 
     return meli_data
