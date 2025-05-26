@@ -1,8 +1,23 @@
 """
 Provee herramientas para las consultas a la página de MELI.
 """
-
+from typing import Iterable
 import requests as r
+from src.utils.proxy_utils import format_proxy
+
+def fetch_with_random_proxy(url: str, proxies: Iterable[str]) -> str:
+    """
+    Elige un proxy aleatorio de una pool de proxies y hace una request usándolo.
+
+    Params:
+        url: La url de la página a la cual se va a hacer la request.
+        proxies: Una pool de proxies.
+    Returns:
+        La página en formato texto.
+    """
+    proxy = format_proxy(next(proxies))
+    return fetch_page(url, proxy)
+
 
 def fetch_page(url:str, proxy=None) -> str:
     """
