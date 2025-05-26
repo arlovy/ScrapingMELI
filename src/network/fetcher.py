@@ -2,8 +2,11 @@
 Provee herramientas para las consultas a la página de MELI.
 """
 from typing import Iterable
+import logging
 import requests as r
 from src.utils.proxy_utils import format_proxy
+
+logger = logging.getLogger(__name__)
 
 def fetch_with_random_proxy(url: str, proxies: Iterable[str]) -> str:
     """
@@ -44,8 +47,12 @@ def fetch_page(url:str, proxy=None) -> str:
                     proxies=proxy,
                     headers={'User-Agent': 'Mozilla/5.0'},
                     timeout=10)
-    except r.exceptions.RequestException as e:
-        print(f"Error: {e}")
+        file.raise_for_status()
+    except r.HTTPError:
+        logger.warning("Error HTTP %s en %s",file.status_code,url)
+        return ""
+    except r.exceptions.RequestException:
+        logger.warning("Error de conexión: %s", url)
         return ""
 
     return file.text
