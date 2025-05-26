@@ -12,13 +12,7 @@ from src.network.fetcher import fetch_with_random_proxy
 from src.parser.parser import get_item_data
 from src.utils.io_utils import read_txt
 
-logging.basicConfig(
-    level=logging.INFO,
-    filename='registro.log',
-    filemode='w',
-    format="%(asctime)s - [%(levelname)s en %(module)s] %(message)s"
-)
-
+logger = logging.getLogger(__name__)
 
 def url_maker() -> list[str]:
     """
@@ -63,7 +57,7 @@ def collect_data(proxies_url:str) -> Generator[list[str], None, None]:
 
     for archivo in archivos:
         if not archivo:
-            logging.info("Error en la request. ¿Proxy fallido?")
+            logger.info("Error en la request. ¿Proxy fallido?")
             continue
 
         try:
@@ -71,7 +65,7 @@ def collect_data(proxies_url:str) -> Generator[list[str], None, None]:
                                         features='html.parser'
                             ).find_all('li',class_='ui-search-layout__item')
         except Exception as e:
-            logging.warning("Error de parseo %s", e)
+            logger.warning("Error de parseo %s", e)
             continue
 
         for article in articles:
