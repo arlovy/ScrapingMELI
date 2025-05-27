@@ -1,8 +1,12 @@
 """
 Provee herramientas de lectura y escritura de archivos.
 """
+from typing import List
+import logging
 
-def read_txt(path:str) -> list[str]:
+logger = logging.getLogger(__name__)
+
+def read_txt(path:str) -> List[str]:
     """
     Lee un archivo de texto.
 
@@ -15,14 +19,7 @@ def read_txt(path:str) -> list[str]:
         with open(path, 'r', encoding='utf-8-sig') as archivo:
             text = [linea.strip() for linea in archivo]
     except FileNotFoundError:
+        logging.warning("Error en la lectura del archivo %s", path)
         text = []
 
     return text
-
-def clean_value(value) -> str:
-    if isinstance(value, str):
-        if value.strip() == "":
-            return None
-        elif value.isdigit():
-            return int(value)
-    return value
