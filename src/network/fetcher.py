@@ -4,7 +4,7 @@ Provee herramientas para las consultas a la página de MELI.
 from typing import Iterable
 import logging
 import requests as r
-from src.utils.proxy_utils import format_proxy
+from src.utils.proxy_utils import random_proxy, format_proxies
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,8 @@ def fetch_with_random_proxy(url: str, proxies: Iterable[str]) -> str:
     Returns:
         La página en formato texto.
     """
-    proxy = format_proxy(next(proxies))
+    formatted = format_proxies(proxies)
+    proxy = random_proxy(formatted)
     return fetch_page(url, proxy)
 
 
