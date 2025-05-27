@@ -1,14 +1,14 @@
 """
 Provee herramientas para las consultas a la página de MELI.
 """
-from typing import Iterable
+from typing import Dict, List
 import logging
 import requests as r
-from src.utils.proxy_utils import random_proxy, format_proxies
+from src.utils.proxy_utils import random_proxy
 
 logger = logging.getLogger(__name__)
 
-def fetch_with_random_proxy(url: str, proxies: Iterable[str]) -> str:
+def fetch_with_random_proxy(url: str, formatted: Dict[str, List[str]]) -> str:
     """
     Elige un proxy aleatorio de una pool de proxies y hace una request usándolo.
 
@@ -18,7 +18,7 @@ def fetch_with_random_proxy(url: str, proxies: Iterable[str]) -> str:
     Returns:
         La página en formato texto.
     """
-    formatted = format_proxies(proxies)
+
     proxy = random_proxy(formatted)
     return fetch_page(url, proxy)
 

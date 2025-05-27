@@ -5,12 +5,12 @@ Realiza las tareas de recolección de datos de forma concurrente.
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from functools import partial
-from itertools import cycle
 from typing import Generator
 from bs4 import BeautifulSoup
 from src.network.fetcher import fetch_with_random_proxy
 from src.parser.parser import get_item_data
 from src.utils.io_utils import read_txt
+from src.utils.proxy_utils import format_proxies
 
 logger = logging.getLogger(__name__)
 
@@ -47,11 +47,12 @@ def collect_data(proxies_url:str) -> Generator[list[str], None, None]:
     Returns:
         Un generador que produce una lista de atributos por propiedad (list[str])
     """
-    proxy_pool = cycle(read_txt(proxies_url))
+    proxy_pool = read_txt(proxies_url)
+    formatted = format_proxies(proxy_pool)
     urls = url_maker()
 
     with ThreadPoolExecutor(max_workers=30) as executor:
-        fetch = partial(fetch_with_random_proxy, proxies=proxy_pool)
+        fetch = partial(fetch_with_random_proxy, formatted=formatted)
         archivos = list(executor.map(fetch, urls))
 
 
