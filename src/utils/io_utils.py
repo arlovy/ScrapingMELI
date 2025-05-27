@@ -19,7 +19,7 @@ def read_txt(path:str) -> List[str]:
         with open(path, 'r', encoding='utf-8-sig') as archivo:
             text = [linea.strip() for linea in archivo]
     except FileNotFoundError:
-        logging.warning("Error en la lectura del archivo %s", path)
+        logger.warning("Error en la lectura del archivo %s", path)
         text = []
 
     return text
