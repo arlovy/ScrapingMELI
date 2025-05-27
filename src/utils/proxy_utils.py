@@ -2,15 +2,48 @@
 Herramientas relacionadas al manejo de proxies.
 """
 
-def format_proxy(proxy_url:str) -> dict:
-    """
-    Convierte una URL de un proxy en formato string a un 
-    diccionario para ser leído por la libreria requests.
+import random as rn
+from typing import List, Dict
+from urllib.parse import urlparse
 
+
+def random_proxy(proxies: Dict[str, List[str]]) -> Dict[str, str]:
+    """
+    Elije una proxy aleatoriamente y la devuelve.
+    
     Params:
-        proxy_url: Una URL de un proxy.
+        proxies: Las proxies ya formateadas en un diccionario.
+    Returns:
+        un diccionario con una sola key: value:
+        {protocolo: url}
+    """
+    if not proxies:
+        return {}
+    protocol = rn.choice(list(proxies.keys()))
+    proxy = rn.choice(proxies[protocol])
+    return {protocol: proxy}
+
+
+def format_proxies(proxies: List[str]) -> Dict[str, List[str]]:
+    """
+    Formatea las proxys desde una lista, las convierte en elementos de
+    un diccionario.
+    
+    Params:
+        proxies: Una lista de proxys(strings)
     
     Returns:
-        Un diccionario tal que {'http': [URL]}
+        Un diccionario donde cada elemento es una proxy.
+        {protocol: url}
     """
-    return {"http": proxy_url}
+    if not proxies:
+        return {}
+    formatted = {}
+    for proxy in proxies:
+        parsed = urlparse(proxy)
+        scheme = parsed.scheme
+        if scheme in {"http", "https", "socks4", "socks5"}:
+            if scheme not in formatted:
+                formatted[scheme] = []
+            formatted[scheme].append(proxy)
+    return formatted
