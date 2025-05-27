@@ -1,8 +1,9 @@
 """
 Operaciones de lógica de negocio.
 """
+from bs4 import Tag
 
-def append_item_attributes(attr:list[str], row:list) -> None:
+def append_item_attributes(attr:Tag, row:list) -> None:
     """
     Lee los atributos de un artículo y los anexa a su registro.
     
@@ -14,6 +15,8 @@ def append_item_attributes(attr:list[str], row:list) -> None:
     """
     #para cada atributo del articulo
     for attribute in attr:
+        if isinstance(attribute, str) and attribute.isdigit():
+            attribute = int(attribute)
         #lo spliteo, tal que si "32 m2 cubiertos" entonces ["32","m2","cubiertos"]
         info = attribute.text.split()
 
@@ -21,7 +24,7 @@ def append_item_attributes(attr:list[str], row:list) -> None:
         if info[1] != "ha": #si no son hectareas, son m2
             row.append(info[0].replace(".",""))
         else:
-            row.append(int(info[0].replace(".","")) * 1000) # 1 hectarea = 10000 m2
+            row.append(int(info[0].replace(".","")) * 10000) # 1 hectarea = 10000 m2
     return None
 
 
@@ -48,15 +51,14 @@ def set_attributes_for_special_property(property_:str, row:list, attr:list[str])
                 attr[:] = attr[1]
             #appendeo 2 campos vacíos porque no hay baño ni ambientes
             for _ in range(2):
-                row.append("")
+                row.append(None)
         case "Local":
             #los locales pueden tener baños, en ese caso me salteo los
             #ambientes porque no se especifican
             #y los pongo como un campo vacío.
-            if property_ == "Local":
-                if len(attr) == 1:
-                    for _ in range(2):
-                        row.append("")
+            if len(attr) == 1:
+                for _ in range(2):
+                    row.append(None)
             else:
-                row.append("")
+                row.append(None)
     return None
