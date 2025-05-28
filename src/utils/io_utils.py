@@ -15,11 +15,12 @@ def read_txt(path:str) -> List[str]:
     Returns:
         Una lista de strings.
     """
-    try:
-        with open(path, 'r', encoding='utf-8-sig') as archivo:
-            text = [linea.strip() for linea in archivo]
-    except FileNotFoundError:
-        logger.warning("Error en la lectura del archivo %s", path)
-        text = []
+    text = []
+    if path:
+        try:
+            with open(path, 'r', encoding='utf-8-sig') as archivo:
+                text = [linea.strip() for linea in archivo]
+        except FileNotFoundError:
+            logger.warning("Error en la lectura del archivo %s", path)
 
     return text
